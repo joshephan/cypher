@@ -12,38 +12,49 @@
 > 메타데이터조차도 암호화되며,  
 > 공유는 필요할 때만, 안전하게, 그리고 전적으로 **사용자의 의지에 따라** 이루어집니다.
 
+A TypeScript library for secure file encryption and sharing  
 안전한 파일 암호화 및 공유를 위한 TypeScript 라이브러리
 
-## 주요 기능
-- AES-256-CBC를 사용한 파일 및 메타데이터 암호화
-- RSA-OAEP를 사용한 파일 키 공유
-- 파일별 고유 키 파생 (fileId + masterKey)
-- PEM 형식의 공개키로 파일 키 암호화
-- 파일 접근 권한 관리 및 해제
-- 서버리스/클라이언트 사이드 환경에 최적화
+## Key Features | 주요 기능
+- File and metadata encryption using AES-256-CBC  
+  AES-256-CBC를 사용한 파일 및 메타데이터 암호화
+- File key sharing using RSA-OAEP  
+  RSA-OAEP를 사용한 파일 키 공유
+- Unique key derivation per file (fileId + masterKey)  
+  파일별 고유 키 파생 (fileId + masterKey)
+- File key encryption using PEM format public keys  
+  PEM 형식의 공개키로 파일 키 암호화
+- File access control and revocation  
+  파일 접근 권한 관리 및 해제
+- Optimized for serverless/client-side environments  
+  서버리스/클라이언트 사이드 환경에 최적화
 
-## 설치
+## Installation | 설치
 
 ```bash
 npm install cypher
 ```
 
-## 의존성
-- `crypto-js` : 대칭키 암호화 (AES)
-- `node-forge` : 비대칭키 암호화 (RSA)
-- `uuid` : 고유 식별자 생성
-- (테스트용) `jest`, `ts-jest`, `jest-environment-jsdom`
+## Dependencies | 의존성
+- `crypto-js`: Symmetric encryption (AES)  
+  대칭키 암호화 (AES)
+- `node-forge`: Asymmetric encryption (RSA)  
+  비대칭키 암호화 (RSA)
+- `uuid`: Unique identifier generation  
+  고유 식별자 생성
+- (For testing) `jest`, `ts-jest`, `jest-environment-jsdom`  
+  (테스트용) `jest`, `ts-jest`, `jest-environment-jsdom`
 
-## 사용 방법
+## Usage | 사용 방법
 
-### 1. 초기화
+### 1. Initialization | 초기화
 ```typescript
 import { Cypher } from 'cypher';
 const masterKey = 'your-secure-master-key';
 const cypher = new Cypher(masterKey);
 ```
 
-### 2. 파일 암호화 및 업로드
+### 2. File Encryption and Upload | 파일 암호화 및 업로드
 ```typescript
 const file = new File(['Hello, World!'], 'example.txt', { type: 'text/plain' });
 const metadata = {
@@ -56,25 +67,27 @@ const metadata = {
 const { fileId, metadataId } = await cypher.encryptAndUpload(file, metadata);
 ```
 
-### 3. 파일 다운로드 및 복호화
+### 3. File Download and Decryption | 파일 다운로드 및 복호화
 ```typescript
 const decryptedFile = await cypher.downloadAndDecrypt(fileId);
 ```
 
-### 4. 파일 공유 (RSA 공개키 PEM 문자열 사용)
+### 4. File Sharing (using RSA public key PEM string) | 파일 공유 (RSA 공개키 PEM 문자열 사용)
 ```typescript
+// Generate PEM public key using node-forge
 // node-forge 등으로 PEM 공개키 생성
 const publicKeyPem = `-----BEGIN PUBLIC KEY-----\n...\n-----END PUBLIC KEY-----`;
 await cypher.shareFile(fileId, publicKeyPem);
 ```
 
-### 5. 접근 권한 해제
+### 5. Access Revocation | 접근 권한 해제
 ```typescript
 await cypher.revokeAccess(fileId, publicKeyPem);
 ```
 
-## 테스트
+## Testing | 테스트
 
+Tests run in Jest + jsdom environment (File, FileReader, TextEncoder/Decoder support in Node.js)  
 Jest + jsdom 환경에서 테스트됩니다. (Node.js 환경에서 File, FileReader, TextEncoder/Decoder 지원)
 
 ```bash
@@ -82,54 +95,66 @@ npm install
 npm test
 ```
 
-## 보안 고려사항
-- **마스터 키**는 안전하게 보관해야 하며, 유출 시 모든 파일이 위험합니다.
-- 각 파일은 fileId와 masterKey로부터 고유하게 파생된 키로 암호화됩니다.
-- 파일 키 공유는 PEM 형식의 RSA 공개키로만 가능합니다.
-- 파일/메타데이터는 모두 AES-256-CBC로 암호화됩니다.
-- 복호화 시 날짜 필드는 Date 객체로 변환됩니다.
+## Security Considerations | 보안 고려사항
+- **Master Key** must be securely stored as its compromise puts all files at risk  
+  **마스터 키**는 안전하게 보관해야 하며, 유출 시 모든 파일이 위험합니다
+- Each file is encrypted with a unique key derived from fileId and masterKey  
+  각 파일은 fileId와 masterKey로부터 고유하게 파생된 키로 암호화됩니다
+- File key sharing is only possible using PEM format RSA public keys  
+  파일 키 공유는 PEM 형식의 RSA 공개키로만 가능합니다
+- Files and metadata are encrypted using AES-256-CBC  
+  파일/메타데이터는 모두 AES-256-CBC로 암호화됩니다
+- Date fields are converted to Date objects during decryption  
+  복호화 시 날짜 필드는 Date 객체로 변환됩니다
 
-## API 문서
+## API Documentation | API 문서
 
-### Cypher 클래스
+### Cypher Class | Cypher 클래스
 
-#### 생성자
+#### Constructor | 생성자
 ```typescript
 constructor(masterKey: string)
 ```
 
-#### 메서드
+#### Methods | 메서드
 
 ##### encryptAndUpload
 ```typescript
 async encryptAndUpload(file: File, metadata: Metadata): Promise<EncryptedUploadResult>
 ```
-- 파일을 암호화하고 업로드합니다.
-- 반환값: `{ fileId: string, metadataId: string }`
+- Encrypts and uploads a file  
+  파일을 암호화하고 업로드합니다
+- Returns: `{ fileId: string, metadataId: string }`  
+  반환값: `{ fileId: string, metadataId: string }`
 
 ##### downloadAndDecrypt
 ```typescript
 async downloadAndDecrypt(fileId: string): Promise<CustomFile>
 ```
-- 암호화된 파일을 다운로드하고 복호화합니다.
-- 반환값: 복호화된 `File` 객체
+- Downloads and decrypts an encrypted file  
+  암호화된 파일을 다운로드하고 복호화합니다
+- Returns: Decrypted `File` object  
+  반환값: 복호화된 `File` 객체
 
 ##### shareFile
 ```typescript
 async shareFile(fileId: string, recipientPublicKey: string): Promise<void>
 ```
-- PEM 형식의 RSA 공개키로 파일 키를 암호화하여 공유합니다.
+- Encrypts and shares file key using PEM format RSA public key  
+  PEM 형식의 RSA 공개키로 파일 키를 암호화하여 공유합니다
 
 ##### revokeAccess
 ```typescript
 async revokeAccess(fileId: string, recipientId: string): Promise<void>
 ```
-- 파일 접근 권한을 해제합니다.
+- Revokes file access  
+  파일 접근 권한을 해제합니다
 
-## 예제 테스트 코드
+## Example Test Code | 예제 테스트 코드
 
+See `src/cypher.test.ts` (Jest-based)  
 `src/cypher.test.ts` 참고 (Jest 기반)
 
-## 라이선스
+## License | 라이선스
 
 MIT 
