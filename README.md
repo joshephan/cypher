@@ -1,4 +1,4 @@
-# Cypher
+# GrayGate Cypher
 
 > 🔐 **Why this project exists**  
 > In a world where user data is routinely exposed, intercepted, or misused by cloud providers and centralized platforms, **Cypher** was created to put ownership and control back into the hands of the individual.  
