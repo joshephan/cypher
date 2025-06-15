@@ -1,6 +1,6 @@
 {
   "name": "graygate-cypher",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Client-side end-to-end encrypted file storage and sharing",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
