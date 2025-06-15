@@ -1,5 +1,7 @@
 # GrayGate Cypher
 
+![image](https://github.com/user-attachments/assets/e3479829-bf37-4fa6-847b-5fb4b84b1181)
+
 > 🔐 **Why this project exists**  
 > In a world where user data is routinely exposed, intercepted, or misused by cloud providers and centralized platforms, **Cypher** was created to put ownership and control back into the hands of the individual.  
 > This library ensures that **only the user can access their files**, with encryption keys never leaving their device. Even metadata is protected.  
