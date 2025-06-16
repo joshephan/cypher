@@ -5,6 +5,7 @@ import * as forge from 'node-forge';
 export class CryptoUtils {
   private static readonly KEY_SIZE = 256;
   private static readonly ITERATIONS = 1000;
+  private static readonly SALT_ITERATIONS = 1000;
   private static readonly SALT_SIZE = 128;
   private static readonly IV_SIZE = 128;
 
@@ -12,7 +13,7 @@ export class CryptoUtils {
     // fileId를 사용하여 결정적인 salt 생성
     const salt = CryptoJS.PBKDF2(fileId, masterKey, {
       keySize: this.SALT_SIZE / 32,
-      iterations: 1
+      iterations: this.SALT_ITERATIONS
     });
 
     // 생성된 salt를 사용하여 파일 키 도출
